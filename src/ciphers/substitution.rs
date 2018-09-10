@@ -162,7 +162,7 @@ impl SubstitutionCipher {
     ///
     /// Please note that duplicate bytes in the provided byte mapping will
     /// result in an irreversible cipher.
-    pub fn from_bytes_unchecked(map: ByteMapping) -> Self {
+    fn from_bytes_unchecked(map: ByteMapping) -> Self {
         let mut inv = ByteMapping([0; BYTE_SIZE]);
         for (i, &b) in map.0.iter().enumerate() {
             inv[b] = i as u8;
