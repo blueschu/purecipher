@@ -1,10 +1,19 @@
 use std::u8;
 
+mod substitution;
+
+pub use self::substitution::{SubstitutionCipher, SubstitutionBuilder};
+
 /// Trait for pure (stateless) ciphers.
 ///
 /// Implementors are expected to implement `PureCipher::encipher` and
 /// `PureCipher::decipher` as inverses of one another. This invariant, however,
 /// was not deemed strong enough to merit marking this trait as unsafe.
+///
+/// This trait is largely unnecessaryf or the functionality of this crate: all
+/// "pure" ciphers can be expressed as a trivial substitution cipher. This trait
+/// exists only to enable the demonstration of passing trait objects over FFI
+/// boundaries.
 ///
 /// # Example
 /// ```
@@ -49,7 +58,6 @@ pub trait PureCipher {
         }
     }
 }
-
 
 /// Cipher that performs no ciphering.
 ///
