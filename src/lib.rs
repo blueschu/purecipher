@@ -1,6 +1,7 @@
 //! A crate implementing pure (stateless) ciphers.
 
 pub mod ciphers;
+pub mod classic;
 
 pub use self::ciphers::PureCipher;
 
