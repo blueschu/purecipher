@@ -1,9 +1,4 @@
 //! Substitution-based pure ciphers.
-//!
-//! The API provided by this crate is intentionally limited in scope. Structures
-//! and methods are included only to simplify the logic within the crate or to
-//! provide an interesting api to expose over the foreign function interface.
-
 
 use std::u8;
 use std::fmt;
@@ -70,7 +65,7 @@ impl SubstitutionBuilder {
     /// # Examples
     /// ```
     /// use std::u8;
-    /// use purecipher::{PureCipher, ciphers::SubstitutionBuilder};
+    /// use purecipher::{PureCipher, SubstitutionBuilder};
     ///
     /// let mut builder = SubstitutionBuilder::new();
     ///
@@ -88,7 +83,7 @@ impl SubstitutionBuilder {
     ///
     /// # Examples
     /// ```
-    /// use purecipher::{PureCipher, ciphers::SubstitutionBuilder};
+    /// use purecipher::{PureCipher, SubstitutionBuilder};
     ///
     /// let mut builder = SubstitutionBuilder::new();
     ///
@@ -115,7 +110,7 @@ impl SubstitutionBuilder {
     ///
     /// # Examples
     /// ```
-    /// use purecipher::{PureCipher, ciphers::SubstitutionBuilder};
+    /// use purecipher::{PureCipher, SubstitutionBuilder};
     ///
     /// let mut builder = SubstitutionBuilder::new();
     /// builder.rotate_range(b'A', b'C', 1);

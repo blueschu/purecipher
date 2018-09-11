@@ -1,14 +1,12 @@
 //! A collection of classic pure ciphers.
 
-use super::ciphers::{SubstitutionBuilder, SubstitutionCipher};
+use super::{SubstitutionBuilder, SubstitutionCipher};
 
 /// Builds the classic caesar cipher.
 ///
 /// # Example
 /// ```
-/// use purecipher::classic;
-///
-/// let caesar = classic::caesar();
+/// let caesar = purecipher::caesar();
 /// let message = "We attack at dawn.";
 ///
 /// let cipher_text = purecipher::encipher_bytes(&caesar, &message);
@@ -25,9 +23,7 @@ pub fn caesar() -> SubstitutionCipher {
 ///
 /// # Example
 /// ```
-/// use purecipher::classic;
-///
-/// let rot13 = classic::rot13_alpha();
+/// let rot13 = purecipher::rot13_alpha();
 /// let message = "Lovely plumage, the Norwegian Blue.";
 ///
 /// let cipher_text = purecipher::encipher_bytes(&rot13, &message);
@@ -43,9 +39,7 @@ pub fn rot13_alpha() -> SubstitutionCipher {
 ///
 /// # Example
 /// ```
-/// use purecipher::classic;
-///
-/// let leet = classic::leet_speak();
+/// let leet = purecipher::leet_speak();
 /// let message = "Pure ciphers are the BEST!";
 ///
 /// let cipher_text = purecipher::encipher_bytes(&leet, &message);
