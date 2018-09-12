@@ -5,3 +5,7 @@ authors = ["Brian Schubert <brianm.schubert@gmail.com>"]
 publish = false
 
 [dependencies]
+libc = "0.2.43"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
