@@ -4,8 +4,11 @@
 //! and methods are included only to simplify the logic within the crate or to
 //! provide an interesting api to expose over the foreign function interface.
 
+extern crate libc;
+
 mod substitution;
 mod classic;
+pub mod ffi;
 
 pub use self::substitution::{SubstitutionCipher, SubstitutionBuilder};
 pub use self::classic::{caesar, leet_speak, rot13_alpha};
