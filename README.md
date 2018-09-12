@@ -7,11 +7,11 @@ inking a Python C extension with a rust library.
 
 ## Testing
 Each component of this repository includes (or will include) a set of
-unit tests that verify their functionality. All tests can be run from 
+unit tests to verify their functionality. All tests can be run from 
 the command line.
 
 ### Rust Tests
-To run build and run the Rust unit tests, simply use cargo's `test` command:
+To build and run the Rust unit tests, simply use cargo's `test` command:
 ```bash
 $ cargo test
 ```
@@ -34,7 +34,7 @@ $ cargo build --manifest-path ../Cargo.toml
 $ cc -o ctest test.c --std=c11 -Wall -I../include -L../target/debug -lpurecipher
 $ LD_LIBRARY_PATH=../target/debug ./ctest
 ```
-where `cc` is a compatible C compiler of you chossing (e.g. `gcc`, `clang`).
+where `cc` is a compatible C compiler of your choosing (e.g. `gcc`, `clang`).
 
 ## Acknowledgments
 The layout of this repository was inspired by the C API for the [Rust Regex Engine][rure].
