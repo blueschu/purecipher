@@ -295,4 +295,24 @@ mod tests {
             )
         }
     }
+
+    #[test]
+    fn sub_cipher_from_bytes_unchecked() {
+        let test_range = (b'A', b'Z');
+        let mut byte_mapping = ByteMapping::default();
+
+        // Set single forward shift mapping for bytes in test range
+        byte_mapping[test_range.1] = test_range.0;
+        for b in test_range.0..test_range.1 {
+            byte_mapping[b] += 1;
+        }
+
+        let cipher = SubstitutionCipher::from_bytes_unchecked(byte_mapping);
+
+        // Check that mapping was preserved during cipher creation
+        assert_eq!(test_range.0, cipher.encipher(test_range.1));
+        for b in test_range.0..test_range.1 {
+            assert_eq!(b + 1, cipher.encipher(b))
+        }
+    }
 }
