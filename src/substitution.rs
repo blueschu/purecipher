@@ -212,7 +212,7 @@ mod tests {
             let cipher = builder.into_cipher();
 
             // Check that all bytes are ciphered correctly for the shift.
-            for b in 0..u8::MAX - 1 {
+            for b in 0..=u8::MAX {
                 let enc = cipher.encipher(b);
                 assert_eq!(b.wrapping_add(offset), enc);
                 assert_eq!(b, cipher.decipher(enc));
@@ -229,11 +229,31 @@ mod tests {
             let cipher = builder.into_cipher();
 
             // Check that all bytes are ciphered correctly for the shift.
-            for b in 0..u8::MAX - 1 {
+            for b in 0..=u8::MAX {
                 let enc = cipher.encipher(b);
                 assert_eq!(b.wrapping_sub(offset.abs() as u8), enc);
                 assert_eq!(b, cipher.decipher(enc));
             }
+        }
+    }
+
+    #[test]
+    fn sub_builder_rotate_only_affects_inclusive_range() {
+        let test_range = (b'A', b'Z');
+        let offset = 2;
+
+        let mut builder = SubstitutionBuilder::new();
+        builder.rotate_range(test_range.0, test_range.1, offset);
+        let cipher = builder.into_cipher();
+
+        // Check that only the bytes in the rotated range have been shifted
+        for b in 0..=u8::MAX {
+            let expected = if b <= test_range.1 && b >= test_range.0 {
+                test_range.0 + (b - test_range.0 + offset as u8) % (1 + test_range.1 - test_range.0)
+            } else {
+                b
+            };
+            assert_eq!(cipher.encipher(b), expected);
         }
     }
 }
