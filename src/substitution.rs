@@ -205,8 +205,6 @@ mod tests {
 
     #[test]
     fn sub_builder_rotate_forward() {
-        use std::num::Wrapping;
-
         // Check that every possible shift value is handled correctly.
         for offset in 0..=u8::MAX {
             let mut builder = SubstitutionBuilder::new();
@@ -216,7 +214,24 @@ mod tests {
             // Check that all bytes are ciphered correctly for the shift.
             for b in 0..u8::MAX - 1 {
                 let enc = cipher.encipher(b);
-                assert_eq!((Wrapping(b) + Wrapping(offset)).0, enc);
+                assert_eq!(b.wrapping_add(offset), enc);
+                assert_eq!(b, cipher.decipher(enc));
+            }
+        }
+    }
+
+    #[test]
+    fn sub_builder_rotate_backward() {
+        // Check that every possible shift value is handled correctly.
+        for offset in -(u8::MAX as i16)..=0 {
+            let mut builder = SubstitutionBuilder::new();
+            builder.rotate_range(0, u8::MAX, offset as isize);
+            let cipher = builder.into_cipher();
+
+            // Check that all bytes are ciphered correctly for the shift.
+            for b in 0..u8::MAX - 1 {
+                let enc = cipher.encipher(b);
+                assert_eq!(b.wrapping_sub(offset.abs() as u8), enc);
                 assert_eq!(b, cipher.decipher(enc));
             }
         }
