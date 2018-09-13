@@ -280,4 +280,19 @@ mod tests {
         assert_eq!(b'd', cipher.encipher(b'e'));
         assert_eq!(b'e', cipher.encipher(b'c'));
     }
+
+    #[test]
+    fn sub_builder_new_matches_cipher_default() {
+        let ciphers = (
+            SubstitutionBuilder::new().into_cipher(),
+            SubstitutionCipher::default(),
+        );
+
+        for b in 0..=u8::MAX {
+            assert_eq!(
+                ciphers.0.encipher(b),
+                ciphers.1.encipher(b),
+            )
+        }
+    }
 }
