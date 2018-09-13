@@ -69,9 +69,37 @@ pub extern "C" fn purecipher_cipher_leet() -> CipherObject {
     CipherObject { ptr: Box::into_raw(cipher_ptr) }
 }
 
+#[no_mangle]
+pub extern "C" fn purecipher_cipher_null() -> CipherObject {
+    let cipher_ptr = Box::new(super::NullCipher {});
+    CipherObject { ptr: Box::into_raw(cipher_ptr) }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cipher_buffer_reversible() {
+        let cipher_ptr = purecipher_cipher_rot13();
+        let text = "these are some bytes";
+        let mut buffer = Vec::from(text);
+
+        purecipher_encipher_buffer(
+            cipher_ptr,
+            buffer.as_mut_slice().as_mut_ptr(),
+            buffer.len()
+        );
+        assert_ne!(text.as_bytes(), buffer.as_slice());
+
+        purecipher_decipher_buffer(
+            cipher_ptr,
+            buffer.as_mut_slice().as_mut_ptr(),
+            buffer.len()
+        );
+        assert_eq!(text.as_bytes(), buffer.as_slice());
+        purecipher_free(cipher_ptr);
+    }
 
     #[test]
     fn cipher_caesar() {
@@ -126,9 +154,4 @@ mod tests {
         );
         assert_eq!(output.as_ref(), buffer.as_slice());
     }
-}
-#[no_mangle]
-pub extern "C" fn purecipher_cipher_null() -> CipherObject {
-    let cipher_ptr = Box::new(super::NullCipher {});
-    CipherObject { ptr: Box::into_raw(cipher_ptr) }
 }
