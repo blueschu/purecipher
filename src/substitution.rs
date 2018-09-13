@@ -256,4 +256,28 @@ mod tests {
             assert_eq!(cipher.encipher(b), expected);
         }
     }
+
+    #[test]
+    fn sub_builder_swap() {
+        let mut builder = SubstitutionBuilder::new();
+
+        let mappings = [
+            (b'a', b'b'), // a->b, b->a
+            (b'b', b'c'), // c->a, b->c, a->b
+            (b'd', b'e'), // c->a, b->c, a->b, d->e, e->d
+            (b'd', b'c'), // d->a, c->e, b->c, a->b, e->d
+        ];
+
+        for (left, right) in mappings.iter() {
+            builder.swap(*left, *right);
+        }
+
+        let cipher = builder.into_cipher();
+
+        assert_eq!(b'a', cipher.encipher(b'd'));
+        assert_eq!(b'b', cipher.encipher(b'a'));
+        assert_eq!(b'c', cipher.encipher(b'b'));
+        assert_eq!(b'd', cipher.encipher(b'e'));
+        assert_eq!(b'e', cipher.encipher(b'c'));
+    }
 }
