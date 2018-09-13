@@ -52,7 +52,19 @@ pub extern "C" fn purecipher_decipher_buffer(cipher: CipherObject, buffer: *mut 
 }
 
 #[no_mangle]
+pub extern "C" fn purecipher_cipher_caesar() -> CipherObject {
+    let cipher_ptr = Box::new(super::caesar());
+    CipherObject { ptr: Box::into_raw(cipher_ptr) }
+}
+
+#[no_mangle]
 pub extern "C" fn purecipher_cipher_rot13() -> CipherObject {
     let cipher_ptr = Box::new(super::rot13_alpha());
+    CipherObject { ptr: Box::into_raw(cipher_ptr) }
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_cipher_leet() -> CipherObject {
+    let cipher_ptr = Box::new(super::leet_speak());
     CipherObject { ptr: Box::into_raw(cipher_ptr) }
 }

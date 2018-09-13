@@ -78,9 +78,19 @@ void purecipher_decipher_buffer(purecipher_obj_t cipher, uint8_t* buffer, size_t
 
 
 /*
+ * Builds a pure cipher that shifts ASCII letters three ahead.
+ */
+purecipher_obj_t purecipher_cipher_caesar(void);
+
+/*
  * Builds a pure cipher that performs rot13 encoding on ASCII letters.
  */
 purecipher_obj_t purecipher_cipher_rot13(void);
+
+/*
+ * Builds a rough pure cipher for stereotypical "leet" speak.
+ */
+purecipher_obj_t purecipher_cipher_leet(void);
 
 
 #ifdef __cplusplus

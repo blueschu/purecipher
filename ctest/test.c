@@ -29,7 +29,23 @@
 
 #include "purecipher.h"
 
+static bool test_caesar(void) {
+    bool pass;
+    const purecipher_obj_t caesar = purecipher_cipher_caesar();
+    const uint8_t *expected = (uint8_t *) "Zh dwwdfn dw gdzq.";
+
+    uint8_t buffer[19] = "We attack at dawn.";
+
+    purecipher_encipher_buffer(caesar, buffer, sizeof(buffer));
+
+    pass = 0 == memcmp(expected, buffer, sizeof(buffer));
+
+    purecipher_free(caesar);
+    return pass;
+}
+
 static bool test_rot13(void) {
+    bool pass;
     const purecipher_obj_t rot13 = purecipher_cipher_rot13();
     const uint8_t *expected = (uint8_t *) "Ybiryl cyhzntr, gur Abejrtvna Oyhr.";
 
@@ -37,9 +53,24 @@ static bool test_rot13(void) {
 
     purecipher_encipher_buffer(rot13, buffer, sizeof(buffer));
 
-    bool pass = 0 == memcmp(expected, buffer, sizeof(buffer));
+    pass = 0 == memcmp(expected, buffer, sizeof(buffer));
 
     purecipher_free(rot13);
+    return pass;
+}
+
+static bool test_leet(void) {
+    bool pass;
+    const purecipher_obj_t leet = purecipher_cipher_leet();
+    const uint8_t *expected = (uint8_t *) "Pur3 c!ph3rs @r3 1h3 BE5Ti";
+
+    uint8_t buffer[27] = "Pure ciphers are the BEST!";
+
+    purecipher_encipher_buffer(leet, buffer, sizeof(buffer));
+
+    pass = 0 == memcmp(expected, buffer, sizeof(buffer));
+
+    purecipher_free(leet);
     return pass;
 }
 
@@ -61,7 +92,9 @@ static void run_test(bool test_case(), const char *name, bool *pass_flag) {
 int main(void) {
     bool pass_flag = true;
 
+    run_test(test_caesar, "test_caesar", &pass_flag);
     run_test(test_rot13, "test_rot13", &pass_flag);
+    run_test(test_leet, "test_leet", &pass_flag);
 
     if (!pass_flag) {
         return 1;
