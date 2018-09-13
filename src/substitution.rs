@@ -6,12 +6,12 @@ use std::ops::{Index, IndexMut};
 
 use super::{PureCipher, NullCipher};
 
-/// Maximum value for an unsigned byte as the hardware word size.
-const BYTE_SIZE: usize = u8::MAX as usize;
+/// The number of values that can be index by a single unsigned byte.
+const ALL_U8: usize = u8::MAX as usize + 1;
 
 #[derive(Clone)]
 /// Index based mapping between bytes.
-struct ByteMapping([u8; BYTE_SIZE]);
+struct ByteMapping([u8; ALL_U8]);
 
 impl fmt::Debug for ByteMapping {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
@@ -28,8 +28,8 @@ impl fmt::Debug for ByteMapping {
 impl Default for ByteMapping {
     // Builds an array of every 8-bit byte in ascending order.
     fn default() -> Self {
-        let mut bytes = [0; BYTE_SIZE];
-        for b in 0..u8::MAX {
+        let mut bytes = [0; ALL_U8];
+        for b in 0..=u8::MAX {
             bytes[b as usize] = b;
         }
         ByteMapping(bytes)
@@ -123,7 +123,7 @@ impl SubstitutionBuilder {
     /// assert_eq!(b'D', cipher.encipher(b'D'));
     /// ```
     pub fn rotate_range(&mut self, from: u8, to: u8, offset: isize) {
-        let abs_offset = offset.abs() as usize % (to - from) as usize;
+        let abs_offset = offset.abs() as usize % (1 + to as u16 - from as u16) as usize;
         let slice = &mut self.map.0[from as usize..=to as usize];
 
         if offset < 0 {
@@ -158,7 +158,7 @@ impl SubstitutionCipher {
     /// Please note that duplicate bytes in the provided byte mapping will
     /// result in an irreversible cipher.
     fn from_bytes_unchecked(map: ByteMapping) -> Self {
-        let mut inv = ByteMapping([0; BYTE_SIZE]);
+        let mut inv = ByteMapping([0; ALL_U8]);
         for (i, &b) in map.0.iter().enumerate() {
             inv[b] = i as u8;
         }
@@ -186,5 +186,39 @@ impl PureCipher for SubstitutionCipher {
 
     fn decipher(&self, token: u8) -> u8 {
         self.inv[token]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sub_builder_new_empty() {
+        let cipher = SubstitutionBuilder::new().into_cipher();
+
+        for b in 0..=u8::MAX {
+            assert_eq!(b, cipher.encipher(b));
+            assert_eq!(b, cipher.decipher(b));
+        }
+    }
+
+    #[test]
+    fn sub_builder_rotate_forward() {
+        use std::num::Wrapping;
+
+        // Check that every possible shift value is handled correctly.
+        for offset in 0..=u8::MAX {
+            let mut builder = SubstitutionBuilder::new();
+            builder.rotate_range(0, u8::MAX, offset as isize);
+            let cipher = builder.into_cipher();
+
+            // Check that all bytes are ciphered correctly for the shift.
+            for b in 0..u8::MAX - 1 {
+                let enc = cipher.encipher(b);
+                assert_eq!((Wrapping(b) + Wrapping(offset)).0, enc);
+                assert_eq!(b, cipher.decipher(enc));
+            }
+        }
     }
 }
