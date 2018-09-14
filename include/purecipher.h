@@ -28,7 +28,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -44,6 +43,14 @@ typedef struct {
     void *_data;
     void *_vtable;
 } purecipher_obj_t;
+
+/*
+ * Helper structure for constructing substitution ciphers.
+ *
+ * This structure must be freed by either converting it into a cipher via
+ * purecipher_builder_into_cipher or freeing it via purecipher_builder_discard.
+ */
+typedef struct purecipher_builder_t purecipher_builder_t;
 
 /*
  * Frees the given purecipher_obj_t. This function must be called once for every
@@ -63,7 +70,7 @@ void purecipher_free(purecipher_obj_t cipher);
  * If an error occurs, such as an invalid cipher being provided, the buffer will
  * be left unchanged.
  */
-void purecipher_encipher_buffer(purecipher_obj_t cipher, uint8_t* buffer, size_t length);
+void purecipher_encipher_buffer(purecipher_obj_t cipher, uint8_t *buffer, size_t length);
 
 /*
  * Decodes the provided buffer with the given cipher.
@@ -74,8 +81,40 @@ void purecipher_encipher_buffer(purecipher_obj_t cipher, uint8_t* buffer, size_t
  * If an error occurs, such as an invalid cipher being provided, the buffer will
  * be left unchanged.
  */
-void purecipher_decipher_buffer(purecipher_obj_t cipher, uint8_t* buffer, size_t length);
+void purecipher_decipher_buffer(purecipher_obj_t cipher, uint8_t *buffer, size_t length);
 
+/*
+ * Creates a new substituion cipher builder.
+ *
+ * The pointer returned must be freed by either calling purecipher_builder_into_cipher
+ * to convert the builder into a cipher of by calling purecipher_builder_discard
+ * to free the builder without creating a cipher.
+ */
+purecipher_builder_t *purecipher_builder_new(void);
+
+/*
+ * Swaps the mappings of left and right in the the cipher that the builder will
+ * produce.
+ */
+void purecipher_builder_swap(purecipher_builder_t *builder, uint8_t left, uint8_t right);
+
+/*
+ * Rotates each byte in the given inclusive range in the cipher that the builder
+ * will produce.
+ */
+void purecipher_builder_rotate(purecipher_builder_t *builder, uint8_t from, uint8_t to, int32_t offset);
+
+/*
+ * Frees the given builder without converting it into a cipher.
+ */
+void purecipher_builder_discard(purecipher_builder_t *builder);
+
+/*
+ * Converts the given builder into a substitution cipher.
+ *
+ * This function frees the builder and invalidates any existing pointers.
+ */
+purecipher_obj_t purecipher_builder_into_cipher(purecipher_builder_t *builder);
 
 /*
  * Builds a pure cipher that shifts ASCII letters three ahead.
@@ -99,7 +138,6 @@ purecipher_obj_t purecipher_cipher_leet(void);
  * has less memory overhead than a cipher that maps bytes to themselves.
  */
 purecipher_obj_t purecipher_cipher_null(void);
-
 
 #ifdef __cplusplus
 }

@@ -4,9 +4,9 @@
 
 use std::slice;
 
-use libc::size_t;
+use libc::{size_t, int32_t};
 
-use super::PureCipher;
+use super::{PureCipher, SubstitutionBuilder};
 
 #[repr(C)]
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -52,6 +52,41 @@ pub extern "C" fn purecipher_decipher_buffer(cipher: CipherObject, buffer: *mut 
 }
 
 #[no_mangle]
+pub extern "C" fn purecipher_builder_new() -> *mut SubstitutionBuilder {
+    let builder = Box::new(SubstitutionBuilder::new());
+    Box::into_raw(builder)
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_builder_swap(builder: *mut SubstitutionBuilder, left: u8, right: u8) {
+    let builder_ref = unsafe { &mut *builder };
+    builder_ref.swap(left, right)
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_builder_rotate(builder: *mut SubstitutionBuilder, from: u8, to: u8, offset: int32_t) {
+    let builder_ref = unsafe { &mut *builder };
+    builder_ref.rotate_range(from, to, offset as isize)
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_builder_into_cipher(builder: *mut SubstitutionBuilder) -> CipherObject {
+    // No null pointer check is performed against the builder as no sensible
+    // error value can be returned. It is the caller's responsibility to pass a
+    // valid builder.
+    let builder_box = unsafe { Box::from_raw(builder) };
+    let cipher_ptr = Box::new(builder_box.into_cipher());
+    CipherObject { ptr: Box::into_raw(cipher_ptr) }
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_builder_discard(builder: *mut SubstitutionBuilder) {
+    unsafe {
+        Box::from_raw(builder);
+    }
+}
+
+#[no_mangle]
 pub extern "C" fn purecipher_cipher_caesar() -> CipherObject {
     let cipher_ptr = Box::new(super::caesar());
     CipherObject { ptr: Box::into_raw(cipher_ptr) }
@@ -88,14 +123,14 @@ mod tests {
         purecipher_encipher_buffer(
             cipher_ptr,
             buffer.as_mut_slice().as_mut_ptr(),
-            buffer.len()
+            buffer.len(),
         );
         assert_ne!(text.as_bytes(), buffer.as_slice());
 
         purecipher_decipher_buffer(
             cipher_ptr,
             buffer.as_mut_slice().as_mut_ptr(),
-            buffer.len()
+            buffer.len(),
         );
         assert_eq!(text.as_bytes(), buffer.as_slice());
         purecipher_free(cipher_ptr);
@@ -150,7 +185,7 @@ mod tests {
         purecipher_encipher_buffer(
             cipher,
             buffer.as_mut_slice().as_mut_ptr(),
-            buffer.len()
+            buffer.len(),
         );
         assert_eq!(output.as_ref(), buffer.as_slice());
     }
