@@ -34,7 +34,7 @@ static bool test_caesar(void) {
     const purecipher_obj_t caesar = purecipher_cipher_caesar();
     const uint8_t *expected = (uint8_t *) "Zh dwwdfn dw gdzq.";
 
-    uint8_t buffer[19] = "We attack at dawn.";
+    uint8_t buffer[] = "We attack at dawn.";
 
     purecipher_encipher_buffer(caesar, buffer, sizeof(buffer));
 
@@ -49,7 +49,7 @@ static bool test_rot13(void) {
     const purecipher_obj_t rot13 = purecipher_cipher_rot13();
     const uint8_t *expected = (uint8_t *) "Ybiryl cyhzntr, gur Abejrtvna Oyhr.";
 
-    uint8_t buffer[36] = "Lovely plumage, the Norwegian Blue.";
+    uint8_t buffer[] = "Lovely plumage, the Norwegian Blue.";
 
     purecipher_encipher_buffer(rot13, buffer, sizeof(buffer));
 
@@ -64,13 +64,28 @@ static bool test_leet(void) {
     const purecipher_obj_t leet = purecipher_cipher_leet();
     const uint8_t *expected = (uint8_t *) "Pur3 c!ph3rs @r3 1h3 BE5Ti";
 
-    uint8_t buffer[27] = "Pure ciphers are the BEST!";
+    uint8_t buffer[] = "Pure ciphers are the BEST!";
 
     purecipher_encipher_buffer(leet, buffer, sizeof(buffer));
 
     pass = 0 == memcmp(expected, buffer, sizeof(buffer));
 
     purecipher_free(leet);
+    return pass;
+}
+
+static bool test_null(void) {
+    bool pass;
+    const purecipher_obj_t cipher_null = purecipher_cipher_null();
+    const uint8_t *expected = (uint8_t *) "Boring text that does not change.";
+
+    uint8_t buffer[] = "Boring text that does not change.";
+
+    purecipher_encipher_buffer(cipher_null, buffer, sizeof(buffer));
+
+    pass = 0 == memcmp(expected, buffer, sizeof(buffer));
+
+    purecipher_free(cipher_null);
     return pass;
 }
 
@@ -95,6 +110,7 @@ int main(void) {
     run_test(test_caesar, "test_caesar", &pass_flag);
     run_test(test_rot13, "test_rot13", &pass_flag);
     run_test(test_leet, "test_leet", &pass_flag);
+    run_test(test_null, "test_null", &pass_flag);
 
     if (!pass_flag) {
         return 1;
