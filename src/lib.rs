@@ -13,8 +13,6 @@ pub mod ffi;
 pub use self::substitution::{SubstitutionCipher, SubstitutionBuilder};
 pub use self::classic::{caesar, leet_speak, rot13_alpha};
 
-use std::u8;
-
 /// Encipher some bytes with the given pure cipher.
 ///
 /// This function accepts data in the form of any type that implements
@@ -147,16 +145,63 @@ impl Into<Box<dyn PureCipher>> for Option<Box<dyn PureCipher>> {
 
 #[cfg(test)]
 mod tests {
+    use std::u8;
+
     use super::*;
 
     #[test]
-    fn encipher_str_bytes() {
-        use super::NullCipher;
+    fn cipher_inplace() {
+        struct OverwriteAll;
 
+        impl PureCipher for OverwriteAll {
+            fn encipher(&self, _token: u8) -> u8 { b'A' }
+
+            fn decipher(&self, _token: u8) -> u8 { b'B' }
+        }
+
+        let cipher = OverwriteAll {};
+        let mut buffer = [b'C'; 8];
+
+        cipher.encipher_inplace(&mut buffer);
+        assert_eq!(&[b'A'; 8], &buffer);
+
+        cipher.decipher_inplace(&mut buffer);
+        assert_eq!(&[b'B'; 8], &buffer);
+    }
+
+    #[test]
+    fn null_cipher() {
+        let cipher = NullCipher;
+
+        for b in 0..u8::MAX {
+            assert_eq!(b, cipher.encipher(b));
+            assert_eq!(b, cipher.decipher(b));
+        }
+    }
+
+    #[test]
+    fn cipher_bytes_str() {
         let text = "this is a test";
 
-        let cipher_text = encipher_bytes(&NullCipher {}, &text);
+        let cipher = classic::rot13_alpha();
 
-        assert_eq!(cipher_text, text.as_bytes());
+        let cipher_text = encipher_bytes(&cipher, text);
+        assert_eq!("guvf vf n grfg".as_bytes(), &cipher_text[..]);
+
+        let restored_text = decipher_bytes(&cipher, cipher_text);
+        assert_eq!(text.as_bytes(), &restored_text[..]);
+    }
+
+    #[test]
+    fn cipher_bytes_vec() {
+        let text = Vec::from(&b"this is a test"[..]);
+
+        let cipher = classic::rot13_alpha();
+
+        let cipher_text = encipher_bytes(&cipher, &text);
+        assert_eq!("guvf vf n grfg".as_bytes(), &cipher_text[..]);
+
+        let restored_text = decipher_bytes(&cipher, cipher_text);
+        assert_eq!(text, restored_text);
     }
 }
