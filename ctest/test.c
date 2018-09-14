@@ -74,6 +74,21 @@ static bool test_leet(void) {
     return pass;
 }
 
+static bool test_null(void) {
+    bool pass;
+    const purecipher_obj_t cipher_null = purecipher_cipher_null();
+    const uint8_t *expected = (uint8_t *) "Boring text that does not change.";
+
+    uint8_t buffer[] = "Boring text that does not change.";
+
+    purecipher_encipher_buffer(cipher_null, buffer, sizeof(buffer));
+
+    pass = 0 == memcmp(expected, buffer, sizeof(buffer));
+
+    purecipher_free(cipher_null);
+    return pass;
+}
+
 /*
  * Run the provided named test case, setting the pass_flag to false if it fails.
  *
@@ -95,6 +110,7 @@ int main(void) {
     run_test(test_caesar, "test_caesar", &pass_flag);
     run_test(test_rot13, "test_rot13", &pass_flag);
     run_test(test_leet, "test_leet", &pass_flag);
+    run_test(test_null, "test_null", &pass_flag);
 
     if (!pass_flag) {
         return 1;

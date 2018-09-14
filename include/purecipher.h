@@ -92,6 +92,14 @@ purecipher_obj_t purecipher_cipher_rot13(void);
  */
 purecipher_obj_t purecipher_cipher_leet(void);
 
+/*
+ * Builds a cipher that performs no ciphering.
+ *
+ * This cipher does not store lookup tables for byte substitution and therefore
+ * has less memory overhead than a cipher that maps bytes to themselves.
+ */
+purecipher_obj_t purecipher_cipher_null(void);
+
 
 #ifdef __cplusplus
 }

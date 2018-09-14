@@ -68,3 +68,9 @@ pub extern "C" fn purecipher_cipher_leet() -> CipherObject {
     let cipher_ptr = Box::new(super::leet_speak());
     CipherObject { ptr: Box::into_raw(cipher_ptr) }
 }
+
+#[no_mangle]
+pub extern "C" fn purecipher_cipher_null() -> CipherObject {
+    let cipher_ptr = Box::new(super::NullCipher {});
+    CipherObject { ptr: Box::into_raw(cipher_ptr) }
+}
