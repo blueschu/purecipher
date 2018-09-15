@@ -29,7 +29,7 @@
 
 #include "purecipher.h"
 
-static bool test_builder_new_matches_null() {
+static bool test_builder_new_matches_null(void) {
     bool pass = true;
     uint8_t buf;
 
@@ -54,7 +54,7 @@ static bool test_builder_new_matches_null() {
     return pass;
 }
 
-static bool test_builder_rotate_forward() {
+static bool test_builder_rotate_forward(void) {
     bool pass = true;
     // Check that every possible shift value is handled correctly.
     for (int32_t offset = 0; offset <= UINT8_MAX; offset++) {
@@ -82,7 +82,7 @@ static bool test_builder_rotate_forward() {
     return pass;
 }
 
-static bool test_builder_rotate_backward() {
+static bool test_builder_rotate_backward(void) {
     bool pass = true;
     // Check that every possible shift value is handled correctly.
     for (int32_t offset = -UINT8_MAX; offset <= 0; offset++) {
@@ -110,7 +110,7 @@ static bool test_builder_rotate_backward() {
     return pass;
 }
 
-static bool test_builder_swap() {
+static bool test_builder_swap(void) {
     bool pass;
     purecipher_obj_t cipher;
     {
