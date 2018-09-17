@@ -54,10 +54,6 @@ pub extern "C" fn purecipher_decipher_buffer(cipher: CipherObject, buffer: *mut 
 
 #[no_mangle]
 pub extern "C" fn purecipher_encipher_str(cipher: CipherObject, s: *mut c_char) {
-    if s.is_null() {
-        // Null string is not an error, but work can be done.
-        return;
-    }
     // Compute length of null-terminated string.
     let s_ref = unsafe { CStr::from_ptr(s) };
     // Trailing null byte is not encoded.
@@ -66,10 +62,6 @@ pub extern "C" fn purecipher_encipher_str(cipher: CipherObject, s: *mut c_char) 
 
 #[no_mangle]
 pub extern "C" fn purecipher_decipher_str(cipher: CipherObject, s: *mut c_char) {
-    if s.is_null() {
-        // Null string is not an error, but work can be done.
-        return;
-    }
     // Compute length of null-terminated string.
     let s_ref = unsafe { CStr::from_ptr(s) };
     // Trailing null byte is not decoded.
@@ -181,6 +173,36 @@ mod tests {
 
         purecipher_decipher_str(cipher_ptr, message.as_ptr() as *mut c_char);
         assert_eq!(b"I do not want to buy this record.\0".as_ref(), message.as_bytes_with_nul());
+    }
+
+    #[test]
+    fn cipher_c_str_empty() {
+        // No need to perform any ciphering
+        let cipher_ptr = purecipher_cipher_null();
+
+        let message = CString::new("").unwrap();
+        assert_eq!(b"\0".as_ref(), message.as_bytes_with_nul());
+
+        purecipher_encipher_str(cipher_ptr, message.as_ptr() as *mut c_char);
+        assert_eq!(b"\0".as_ref(), message.as_bytes_with_nul());
+    }
+
+    #[test]
+    fn encipher_buffer_length_lte_1() {
+        struct SetAll;
+        impl PureCipher for SetAll {
+            fn encipher(&self, _token: u8) -> u8 { b'A' }
+            fn decipher(&self, _token: u8) -> u8 { unimplemented!() }
+        }
+
+        let cipher_ptr = CipherObject { ptr: Box::into_raw(Box::new(SetAll {}))};
+        let mut buf = [b'B'; 2];
+
+        purecipher_encipher_buffer(cipher_ptr, buf.as_mut_ptr(), 0);
+        assert_eq!(b"BB", buf.as_ref());
+
+        purecipher_encipher_buffer(cipher_ptr, buf.as_mut_ptr(), 1);
+        assert_eq!(b"AB", buf.as_ref());
     }
 
     #[test]
