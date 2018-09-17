@@ -3,8 +3,9 @@
 //! See the associated C header file for interface documentation.
 
 use std::slice;
+use std::ffi::CStr;
 
-use libc::{size_t, int32_t};
+use libc::{c_char, size_t, int32_t};
 
 use super::{PureCipher, SubstitutionBuilder};
 
@@ -49,6 +50,30 @@ pub extern "C" fn purecipher_decipher_buffer(cipher: CipherObject, buffer: *mut 
     };
 
     cipher_ref.decipher_inplace(slice)
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_encipher_str(cipher: CipherObject, s: *mut c_char) {
+    if s.is_null() {
+        // Null string is not an error, but work can be done.
+        return;
+    }
+    // Compute length of null-terminated string.
+    let s_ref = unsafe { CStr::from_ptr(s) };
+    // Trailing null byte is not encoded.
+    purecipher_encipher_buffer(cipher, s as *mut u8, s_ref.to_bytes().len())
+}
+
+#[no_mangle]
+pub extern "C" fn purecipher_decipher_str(cipher: CipherObject, s: *mut c_char) {
+    if s.is_null() {
+        // Null string is not an error, but work can be done.
+        return;
+    }
+    // Compute length of null-terminated string.
+    let s_ref = unsafe { CStr::from_ptr(s) };
+    // Trailing null byte is not decoded.
+    purecipher_decipher_buffer(cipher, s as *mut u8, s_ref.to_bytes().len())
 }
 
 #[no_mangle]
@@ -114,6 +139,8 @@ pub extern "C" fn purecipher_cipher_null() -> CipherObject {
 mod tests {
     use super::*;
 
+    use std::ffi::CString;
+
     #[test]
     fn cipher_buffer_reversible() {
         let cipher_ptr = purecipher_cipher_rot13();
@@ -134,6 +161,26 @@ mod tests {
         );
         assert_eq!(text.as_bytes(), buffer.as_slice());
         purecipher_free(cipher_ptr);
+    }
+
+    #[test]
+    fn cipher_c_str() {
+        // Cipher to increment all bytes by 1.
+        let cipher_ptr = {
+            let mut builder = SubstitutionBuilder::new();
+            builder.rotate_range(0, 255, 1);
+            let cipher = builder.into_cipher();
+            CipherObject { ptr: Box::into_raw(Box::new(cipher)) }
+        };
+
+        let message = CString::new("I do not want to buy this record.").unwrap();
+        assert_eq!(b"I do not want to buy this record.\0".as_ref(), message.as_bytes_with_nul());
+
+        purecipher_encipher_str(cipher_ptr, message.as_ptr() as *mut c_char);
+        assert_eq!(b"J!ep!opu!xbou!up!cvz!uijt!sfdpse/\0".as_ref(), message.as_bytes_with_nul());
+
+        purecipher_decipher_str(cipher_ptr, message.as_ptr() as *mut c_char);
+        assert_eq!(b"I do not want to buy this record.\0".as_ref(), message.as_bytes_with_nul());
     }
 
     #[test]
