@@ -84,6 +84,22 @@ void purecipher_encipher_buffer(purecipher_obj_t cipher, uint8_t *buffer, size_t
 void purecipher_decipher_buffer(purecipher_obj_t cipher, uint8_t *buffer, size_t length);
 
 /*
+ * Encodes the provided null-terminated string with the given cipher.
+ *
+ * The buffer DOES NOT need to contain valid UTF-8, but it MUST NOT contain
+ * intermittent NULLs.
+ */
+void purecipher_encipher_str(purecipher_obj_t cipher, char *string);
+
+/*
+ * Decodes the provided null-terminated string with the given cipher.
+ *
+ * The buffer DOES NOT need to contain valid UTF-8, but it MUST NOT contain
+ * intermittent NULLs.
+ */
+void purecipher_decipher_str(purecipher_obj_t cipher, char *string);
+
+/*
  * Creates a new substituion cipher builder.
  *
  * The pointer returned must be freed by either calling purecipher_builder_into_cipher

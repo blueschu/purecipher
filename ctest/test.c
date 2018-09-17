@@ -54,6 +54,31 @@ static bool test_builder_new_matches_null(void) {
     return pass;
 }
 
+static bool test_cipher_str(void) {
+    bool pass = true;
+    purecipher_obj_t cipher;
+    {
+        // Depends on rotation substitution ciphers being implemented correctly.
+        purecipher_builder_t *builder = purecipher_builder_new();
+        purecipher_builder_rotate(builder, 0, UINT8_MAX, 1);
+        cipher = purecipher_builder_into_cipher(builder);
+    }
+    char message[] = "Three pigeons on a roof";
+    
+    purecipher_encipher_str(cipher, message);
+    if (0 != strcmp("Uisff!qjhfpot!po!b!sppg", message)) {
+        pass = false;
+    }
+    
+    purecipher_decipher_str(cipher, message);
+    if (0 != strcmp("Three pigeons on a roof", message)) {
+        pass = false;
+    }
+    
+    purecipher_free(cipher);
+    return pass;
+}
+
 static bool test_builder_rotate_forward(void) {
     bool pass = true;
     // Check that every possible shift value is handled correctly.
@@ -215,6 +240,7 @@ int main(void) {
     bool pass_flag = true;
 
     run_test(test_builder_new_matches_null, "test_builder_new_matches_null", &pass_flag);
+    run_test(test_cipher_str, "test_cipher_str", &pass_flag);
     run_test(test_builder_rotate_forward, "test_builder_rotate_forward", &pass_flag);
     run_test(test_builder_rotate_backward, "test_builder_rotate_backward", &pass_flag);
     run_test(test_builder_swap, "test_builder_swap", &pass_flag);
