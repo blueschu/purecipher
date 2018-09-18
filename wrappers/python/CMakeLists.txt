@@ -7,10 +7,21 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
             OUTPUT_VARIABLE PYTHON_INCLUDE)
     message("Using Python headers from ${PYTHON_INCLUDE}")
 
+    # Get the extension suffix for the python3 installation
+    execute_process(
+            COMMAND python3-config --extension-suffix
+            COMMAND tr -d '\n'
+            OUTPUT_VARIABLE PYTHON_EXTENSION_SUFFIX)
+
     file(GLOB purecipher_module_src purecipher/*.c)
     add_library(purecipher-python SHARED ${purecipher_module_src})
+    set_target_properties(purecipher-python PROPERTIES
+            PREFIX ""
+            OUTPUT_NAME purecipher
+            SUFFIX "${PYTHON_EXTENSION_SUFFIX}")
 
     target_include_directories(purecipher-python PRIVATE ${CMAKE_SOURCE_DIR}/include ${PYTHON_INCLUDE})
+    target_link_libraries(purecipher-python "${CMAKE_SOURCE_DIR}/target/debug/libpurecipher.so")
 else ()
     # Build extension using setup.py for release
     add_custom_target(purecipher-python
