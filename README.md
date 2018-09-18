@@ -20,11 +20,11 @@ $ cargo test
 Test cases for the C API exposed by the Rust crate may be found under the `ctest`
 directory. These tests can be built and run via CMake:
 ```bash
-$ mkdir -p ctest/cmake-build-debug
+$ mkdir -p cmake-build-debug
 $ cd !$
 $ cmake ..
 $ make
-$ ./ctest
+$ ./ctest/ctest
 ```
 If using CMake is not an option on your system, you may also compile the sources
 by hand:
