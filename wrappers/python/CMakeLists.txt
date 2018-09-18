@@ -8,9 +8,9 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message("Using Python headers from ${PYTHON_INCLUDE}")
 
     file(GLOB purecipher_module_src purecipher/*.c)
-    add_library(purecipher-python ${purecipher_module_src})
+    add_library(purecipher-python SHARED ${purecipher_module_src})
 
-    target_include_directories(purecipher-python PRIVATE ${PYTHON_INCLUDE})
+    target_include_directories(purecipher-python PRIVATE ${CMAKE_SOURCE_DIR}/include ${PYTHON_INCLUDE})
 else ()
     # Build extension using setup.py for release
     add_custom_target(purecipher-python
