@@ -1,6 +1,13 @@
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
+from glob import glob
 
-purecipher_module = Extension('purecipher', sources=['purecipher/pureciphermodule.c'])
+purecipher_module = Extension(
+    'purecipher',
+    sources=glob('purecipher/*.c'),
+    include_dirs=['../../include'],
+    library_dirs=['../../target/debug'],
+    libraries=['purecipher']
+)
 
 setup(
     name='purecipher',
