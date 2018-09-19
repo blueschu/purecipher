@@ -22,6 +22,11 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
     target_include_directories(purecipher-python PRIVATE ${CMAKE_SOURCE_DIR}/include ${PYTHON_INCLUDE})
     target_link_libraries(purecipher-python "${CMAKE_SOURCE_DIR}/target/debug/libpurecipher.so")
+
+    # Enable compiler warnings
+    if (CMAKE_COMPILER_IS_GNUCC)
+        target_compile_options(purecipher-python PRIVATE "-Wall")
+    endif()
 else ()
     # Build extension using setup.py for release
     add_custom_target(purecipher-python
