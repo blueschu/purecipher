@@ -29,3 +29,5 @@ else ()
             COMMAND python3 setup.py build
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endif ()
+
+add_dependencies(purecipher-python purecipher)
