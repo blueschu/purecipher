@@ -5,7 +5,7 @@ purecipher_module = Extension(
     'purecipher',
     sources=glob('purecipher/*.c'),
     include_dirs=['../../include'],
-    library_dirs=['../../target/debug'],
+    library_dirs=['../../target/release'],
     libraries=['purecipher']
 )
 
