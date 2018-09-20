@@ -1,5 +1,6 @@
 #include "Python.h"
 
+#include "builder.h"
 #include "cipher.h"
 
 const PyDoc_STRVAR(make_cipher_caesar_doc, "Return a pure cipher that shifts ASCII letters three ahead.");
@@ -60,6 +61,9 @@ PyInit_purecipher(void) {
     if (PyType_Ready(&PureCipher_CipherType) < 0) {
         return NULL;
     }
+    if (PyType_Ready(&PureCipher_BuilderType) < 0) {
+        return NULL;
+    }
 
     /* Create the module. */
     module = PyModule_Create(&PureCipher_Module);
@@ -67,9 +71,23 @@ PyInit_purecipher(void) {
         return NULL;
     }
 
+    /* Exception type initialization */
+    PureCipher_BuilderError = PyErr_NewExceptionWithDoc(
+        "purecipher.BuilderError",
+        PyDoc_STR("Python Exception type raised for errors in SubstitutionBuilder instances."),
+        NULL,
+        NULL
+    );
+
     /*  Add objects to module */
     Py_INCREF(&PureCipher_CipherType);
     PyModule_AddObject(module, "Cipher", (PyObject *) &PureCipher_CipherType);
+
+    Py_INCREF(&PureCipher_BuilderType);
+    PyModule_AddObject(module, "SubstitutionBuilder", (PyObject *) &PureCipher_BuilderType);
+
+    Py_INCREF(PureCipher_BuilderError);
+    PyModule_AddObject(module, "BuilderError", PureCipher_BuilderError);
 
     return module;
 }
