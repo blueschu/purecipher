@@ -1,6 +1,8 @@
 #ifndef PURECIPHER_CIPHER_H
 #define PURECIPHER_CIPHER_H
 
+#define PY_SSIZE_T_CLEAN
+
 #include "Python.h"
 
 #include "purecipher.h"
