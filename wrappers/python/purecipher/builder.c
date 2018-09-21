@@ -84,10 +84,10 @@ static PyObject *Builder_swap(PureCipher_BuilderObject *self, PyObject *args) {
 const PyDoc_STRVAR(Builder_swap_doc,
     "swap(left, right)"
     "\n\n"
-    "Swap the two given bytes in the cipher mapping that this builder will"
+    "Swap the two given bytes in the cipher mapping that this builder will\n"
     "produce."
     "\n\n"
-    "This function actions two Python bytes, represented as bytes or bytearray "
+    "This function accepts two Python bytes, represented as bytes or bytearray\n"
     "objects of length 1.");
 
 /*
@@ -114,7 +114,10 @@ const PyDoc_STRVAR(Builder_rotate_doc,
     "rotate(from, to, offset)"
     "\n\n"
     "Rotates each byte in the given inclusive range by the given offset in the\n"
-    "cipher mapping that this builder will produce.");
+    "cipher mapping that this builder will produce."
+    "\n\n"
+    "This function accepts a range given by two Python bytes, represented as\n"
+    "bytes or bytearray objects of length 1.");
 
 /*
  * PureCipher_BuilderObject method description tables.
@@ -132,8 +135,9 @@ const PyDoc_STRVAR(PureCipher_BuilderObject_doc,
     "\n\n"
     "This object is single use: one builder can only produce one substitution cipher.\n"
     "This is intentional. Adding an interface for copying cipher or builder instances\n"
-    "to the purecipher API was deemed unnecessary as it serves only to demonstrate the\n"
-    "design of FFI interfaces and is not intended for practical application.");
+    "to the purecipher API was deemed unnecessary as the purecipher library is intended\n"
+    "to demonstrate the design of FFI interfaces rather than to be used for practical\n"
+    "applications.");
 
 /*
  * Python type object for PureCipher_BuilderObject instances.

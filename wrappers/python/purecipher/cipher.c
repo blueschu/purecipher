@@ -44,7 +44,7 @@ const PyDoc_STRVAR(Cipher_encipher_str_doc,
     "\n\n"
     "Encipher the given string with this cipher."
     "\n\n"
-    "This method only accepts Python strings. For operating on byte-like objects"
+    "This method only accepts Python strings. For operating on byte-like objects\n"
     "inplace, see Cipher.encipher_buffer().");
 
 /*
@@ -133,7 +133,7 @@ static PyMethodDef Cipher_methods[] = {
 PyTypeObject PureCipher_CipherType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "purecipher.Cipher",
-    .tp_doc = "Pure (stateless) cipher",
+    .tp_doc = "Pure (stateless) cipher.",
     .tp_basicsize = sizeof(PureCipher_CipherObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
