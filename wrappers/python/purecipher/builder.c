@@ -52,12 +52,9 @@ static PyObject *Builder_into_cipher(PureCipher_BuilderObject *self, PyObject *P
     const purecipher_obj_t cipher_ptr = purecipher_builder_into_cipher(self->builder);
     self->builder = NULL;
 
-    PyObject *cipher = PyObject_CallObject((PyObject *) &PureCipher_CipherType,
-        NULL);
+    PyObject *cipher = PyObject_CallObject((PyObject *) &PureCipher_CipherType, NULL);
     if (cipher != NULL) {
-        PureCipher_Cipher_set_cipher((PureCipher_CipherObject *) cipher,
-            cipher_ptr
-        );
+        PureCipher_Cipher_set_cipher((PureCipher_CipherObject *) cipher, cipher_ptr);
     }
     return cipher;
 }
@@ -123,10 +120,10 @@ const PyDoc_STRVAR(Builder_rotate_doc,
  * PureCipher_BuilderObject method description tables.
  */
 static PyMethodDef Builder_methods[] = {
-    {"is_consumed", (PyCFunction) Builder_is_consumed, METH_NOARGS, Builder_is_consumed_doc},
-    {"into_cipher", (PyCFunction) Builder_into_cipher, METH_NOARGS, Builder_into_cipher_doc},
-    {"swap", (PyCFunction) Builder_swap, METH_VARARGS, Builder_swap_doc},
-    {"rotate", (PyCFunction) Builder_rotate, METH_VARARGS, Builder_rotate_doc},
+    {"is_consumed", (PyCFunction) Builder_is_consumed, METH_NOARGS,  Builder_is_consumed_doc},
+    {"into_cipher", (PyCFunction) Builder_into_cipher, METH_NOARGS,  Builder_into_cipher_doc},
+    {"swap",        (PyCFunction) Builder_swap,        METH_VARARGS, Builder_swap_doc},
+    {"rotate",      (PyCFunction) Builder_rotate,      METH_VARARGS, Builder_rotate_doc},
     {NULL}  /* Sentinel */
 };
 
