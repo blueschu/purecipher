@@ -28,6 +28,21 @@ class CipherTest(unittest.TestCase):
         self.assertEqual('Pur3 c!ph3rs @r3 1h3 BE5Ti', cipher_text)
         self.assertEqual(message, cipher.decipher(cipher_text))
 
+    def test_encipher_str_matches_buffer(self):
+        # Depends on SubstitutionBuilder being implemented correctly
+        cipher = purecipher.SubstitutionBuilder() \
+            .rotate(b'\x00', b'\xff', 1) \
+            .into_cipher()
+        buffer = bytearray(1)
+        # Test all bytes in [1,126]. NULL adn bytes >=0x7f cannot be tested
+        # because Python strings must be valid utf-8 with no embedded NULLs.
+        for i in range(1, 127):
+            buffer[0] = i
+            buffer_s = buffer.decode('utf-8')
+            cipher.encipher_buffer(buffer)
+            self.assertEqual(cipher.encipher(buffer_s), buffer.decode())
+
+
 
 class BuilderTest(unittest.TestCase):
 
@@ -67,3 +82,18 @@ class BuilderTest(unittest.TestCase):
                 .into_cipher()
         )
         self.assertEqual('bcead', cipher.encipher('abcde'))
+
+    def test_builder_raises_error_when_consumed(self):
+        builder = purecipher.SubstitutionBuilder()
+        builder.into_cipher()  # return ignored
+
+        with self.assertRaises(purecipher.BuilderError):
+            builder.rotate(b'\x00', b'\xff', 1)
+        with self.assertRaises(purecipher.BuilderError):
+            builder.swap(b'a', b'b')
+
+    def test_is_consumed(self):
+        builder = purecipher.SubstitutionBuilder()
+        self.assertFalse(builder.is_consumed())
+        builder.into_cipher()  # return ignored
+        self.assertTrue(builder.is_consumed())
