@@ -18,3 +18,4 @@ add_custom_target(purecipher
 # C Tests against Rust FFI
 add_subdirectory(ctest)
 add_subdirectory(wrappers/python)
+add_subdirectory(wrappers/cplusplus)
