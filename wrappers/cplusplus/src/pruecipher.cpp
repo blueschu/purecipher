@@ -24,13 +24,17 @@ std::vector<std::uint8_t> Cipher::decipher(const std::vector<std::uint8_t>& buff
 }
 
 std::string Cipher::encipher(const std::string& str) const {
-    std::vector<std::uint8_t> cipher_buffer(str.c_str(), str.c_str() + str.size() + 1);
+    // str.size() is used instead of .size() + 1 because the trailing null byte
+    // added by std::string should be ignored. Otherwise, the cipher text will
+    // contain an extraneous trailing null.
+    std::vector<std::uint8_t> cipher_buffer(str.c_str(), str.c_str() + str.size());
     this->encipher_inplace(cipher_buffer);
     return std::string(cipher_buffer.begin(), cipher_buffer.end());
 }
 
 std::string Cipher::decipher(const std::string& str) const {
-    std::vector<std::uint8_t> cipher_buffer(str.c_str(), str.c_str() + str.size() + 1);
+    // Trailing null byte ignored. See comment in implementation of encipher(std::string&).
+    std::vector<std::uint8_t> cipher_buffer(str.c_str(), str.c_str() + str.size());
     this->decipher_inplace(cipher_buffer);
     return std::string(cipher_buffer.begin(), cipher_buffer.end());
 }
