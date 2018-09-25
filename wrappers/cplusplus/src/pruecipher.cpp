@@ -12,13 +12,13 @@ void Cipher::decipher_inplace(std::vector<std::uint8_t>& buffer) const {
 }
 
 std::vector<std::uint8_t> Cipher::encipher(const std::vector<std::uint8_t>& buffer) const {
-    std::vector<uint8_t> cipher_buffer(buffer.size());
+    std::vector<uint8_t> cipher_buffer{buffer};
     this->encipher_inplace(cipher_buffer);
     return cipher_buffer;
 }
 
 std::vector<std::uint8_t> Cipher::decipher(const std::vector<std::uint8_t>& buffer) const {
-    std::vector<uint8_t> cipher_buffer(buffer.size());
+    std::vector<uint8_t> cipher_buffer{buffer};
     this->decipher_inplace(cipher_buffer);
     return cipher_buffer;
 }
