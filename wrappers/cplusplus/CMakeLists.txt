@@ -1,9 +1,9 @@
 set(CMAKE_CXX_STANDARD 17)
 
 # Register C++ wrapper library
-file(GLOB purecipher_cpp_src src/*.c)
-add_library(purecipher-cpp SHARED ${purecipher_cpp_src} src/pruecipher.cpp include/purecipher.hpp)
+add_library(purecipher-cpp SHARED src/pruecipher.cpp)
 target_include_directories(purecipher-cpp PRIVATE ${CMAKE_SOURCE_DIR}/include ./include)
+set_target_properties(purecipher-cpp PROPERTIES PUBLIC_HEADER include/purecipher.hpp)
 
 # Link wrapper against purecipher
 add_dependencies(purecipher-cpp purecipher)
