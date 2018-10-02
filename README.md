@@ -16,9 +16,16 @@ add the following to the dependencies section of your `Cargo.toml` configuration
 [dependencies]
 purecipher = { git = "https://github.com/blueschu/purecipher" }
 ```
-Usage instructions for each of the languages specific wrappers implemented for 
-this library are documented in the `README.md` files found in their respective 
-source roots.
+
+Since the purecipher library is designed to demonstrate the implementation of
+foreign function interfaces, it of courses exposes a C API. This interface is 
+described by the C header file `./include/purecipher.h`. To use purecipher in a 
+C project, simply `#include` this header file and ensure that the purecipher 
+library file is discoverable at link time. To use the purecipher library in a 
+non-C, non-Rust environment, you may either employ a language specific FFI 
+library or make use of one the wrapper libraries provided in the `./wrappers` 
+of this repository. Usage instructions for each of these wrappers are 
+documented in the `README.md` files  found in their respective source roots.
 
 ## Building
 All components of this repository can be built using CMake for convenience. To 
