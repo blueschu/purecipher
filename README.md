@@ -2,15 +2,21 @@
 
 A rust library implementing pure (stateless) ciphers.
 
-This repository is intended to serve as a terse demonstration of interfacing
-with Rust libraries over a foreign functions interface. None of the libraries 
-included within this repository are intended for practical applications. What I
-have coined as "pure ciphers" are simply trivial substitution ciphers with 
-negligible cryptographic value. The APIs of the libraries in the repository are,
-by design, left wanting of many features.
+This repository is intended to serve as a terse demonstration of exposing
+non-primitive data structures over a foreign function interface with the Rust 
+programming language.
+
+purecipher provides a succinct interface for manipulating trivial substitution 
+ciphers. The "meat" of this repository lies in the interface between the Rust 
+code the comprises the purecipher library and the C code that allows this 
+library to used by applications written in C, C++, Python, and other languages. 
+
+The libraries defined in this repository are not intended for practical 
+applications and most definitely should not be used in place of conventional
+cryptographic libraries.
 
 ## Usage
-To incorporate the latest version of the purecipher library in a Rust crate, 
+To incorporate the latest version of the purecipher library into a Rust crate, 
 add the following to the dependencies section of your `Cargo.toml` configuration:
 ```toml
 [dependencies]
@@ -18,7 +24,7 @@ purecipher = { git = "https://github.com/blueschu/purecipher" }
 ```
 
 Since the purecipher library is designed to demonstrate the implementation of
-foreign function interfaces, it of courses exposes a C API. This interface is 
+foreign function interfaces, it of course exposes a C API. This interface is 
 described by the C header file `./include/purecipher.h`. To use purecipher in a 
 C project, simply `#include` this header file and ensure that the purecipher 
 library file is discoverable at link time. To use the purecipher library in a 
